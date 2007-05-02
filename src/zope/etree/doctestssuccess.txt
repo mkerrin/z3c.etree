@@ -1,0 +1,11 @@
+Whitespace doesn't matter
+-------------------------
+
+  >>> '<test ><b><c /></b></test>' #doctest:+XMLDATA
+  '<test><b><c/></b></test>'
+
+String comparison still works
+-----------------------------
+
+  >>> 'Hello, world!'
+  'Hello, world!'

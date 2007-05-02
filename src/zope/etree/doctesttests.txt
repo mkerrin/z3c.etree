@@ -1,0 +1,86 @@
+===================
+XML doctest support 
+===================
+
+  >>> import sys
+  >>> from zope.testing import testrunner
+  >>> defaults = [
+  ...    '--path', this_directory,
+  ...    '--tests-pattern', '^doctests$',
+  ...    ]
+
+Some simple basic tests.
+
+  >>> sys.argv = 'test --tests-pattern ^doctests$ '.split()
+  >>> testrunner.run(defaults)
+  ... # doctest: +NORMALIZE_WHITESPACE
+  Running unit tests:
+  <BLANKLINE>
+  <BLANKLINE>
+  Failure doctests.txt
+  Failed doctests.txt
+   doctests.txt", line 0
+  <BLANKLINE>
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+      '<test><subtest a="b"/></test>'
+  Expected:
+      '<test><subtest1>Content</subtest1></test>'
+  Got:
+      '<test><subtest a="b"/></test>'
+  XML differences:
+      'subtest1' != 'subtest' different tag name.
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+      '<test><subtest>Content</subtest></test>'
+  Expected:
+      '<test><subtest><subtest-2/></subtest></test>'
+  Got:
+      '<test><subtest>Content</subtest></test>'
+  XML differences:
+      1 != 0 different number of subchildren on 'subtest'.
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+      '<test><subtest>XXX</subtest></test>'
+  Expected:
+      '<test><subtest>YYY</subtest></test>'
+  Got:
+      '<test><subtest>XXX</subtest></test>'
+  XML differences:
+      ''YYY' != 'XXX'' have different element content.
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+      '<test><subtest a="b" c="d">XXX</subtest></test>'
+  Expected:
+      '<test><subtest a="b">XXX</subtest></test>'
+  Got:
+      '<test><subtest a="b" c="d">XXX</subtest></test>'
+  XML differences:
+      1 != 2 different number of attributes on 'subtest'.
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+      '<test><subtest a="d">XXX</subtest></test>'
+  Expected:
+      '<test><subtest a="b">XXX</subtest></test>'
+  Got:
+      '<test><subtest a="d">XXX</subtest></test>'
+  XML differences:
+      'a' attribute has different value for the 'subtest' tag.
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+      '<test><subtest attr="d">XXX</subtest></test>'
+  Expected:
+      '<test><subtest a="b">XXX</subtest></test>'
+  Got:
+      '<test><subtest attr="d">XXX</subtest></test>'
+  XML differences:
+      'subtest' expected to find the 'a' attribute.
+  <BLANKLINE>
+    Ran N tests with N failures and N errors in N.NNN seconds.
+  True

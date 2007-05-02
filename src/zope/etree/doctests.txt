@@ -1,0 +1,55 @@
+Test subelement with different name
+-----------------------------------
+
+  >>> '<test><subtest a="b"/></test>'
+  '<test><subtest1>Content</subtest1></test>'
+
+Test different number of elements on a sub element
+--------------------------------------------------
+  
+  >>> '<test><subtest>Content</subtest></test>'
+  '<test><subtest><subtest-2/></subtest></test>'
+
+Different element content
+-------------------------
+
+  >>> '<test><subtest>XXX</subtest></test>'
+  '<test><subtest>YYY</subtest></test>'
+
+Different number of attributes
+------------------------------
+
+  >>> '<test><subtest a="b" c="d">XXX</subtest></test>'
+  '<test><subtest a="b">XXX</subtest></test>'
+
+Different attribute content on subelement
+-----------------------------------------
+
+  >>> '<test><subtest a="d">XXX</subtest></test>'
+  '<test><subtest a="b">XXX</subtest></test>'
+
+Missing attribute
+-----------------
+
+  >>> '<test><subtest attr="d">XXX</subtest></test>'
+  '<test><subtest a="b">XXX</subtest></test>'
+
+Recursion ok
+------------
+
+  >>> '<test><subtest attr="d">XXX</subtest></test>'
+  '<test><subtest attr="d">XXX</subtest></test>'
+
+ElementTree objects
+===================
+
+Got to see what happens when 'got' argument is an ElementTree object.
+
+  >>> el = etree.Element('test')
+  >>> el.append(etree.Element('subtest'))
+
+  >>> print etree.tostring(el)
+  <test>
+    <subtest>
+    </subtest>
+  </test>
