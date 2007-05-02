@@ -5,12 +5,12 @@ Zope Element Tree Support
 This package does not implement the ElementTree API but instead provides
 proxy objects that wrap some of the more common ElementTree implementations.
 Then one of these proxy objects is registered as a utility, providing the
-*zope.etree.interfaces.IEtree* interface, which can be looked up through
+*z3c.etree.interfaces.IEtree* interface, which can be looked up through
 the Zope component architecture. Thus removing the hard dependency a Python
 import statement introduces on any one ElementTree implementation.
 
 This will allow anyone interested in just trying out a module developed using
-*zope.etree* to use a pure Python implementation of ElementTree (which is really
+*z3c.etree* to use a pure Python implementation of ElementTree (which is really
 easy to install, but slow). While a developer who is in the final stages of
 going live with a new site might want to configure the same module to use lxml
 (which is *not* easy to install as it depends on libxml2 and libxslt but is
@@ -23,32 +23,32 @@ michael.kerrin@openapp.ie and I will do my best to fix the situation.
 Installation and Configuration
 ==============================
 
-*zope.etree* is installed like any other Zope3 module. That is it should be
-copied verbatim into your Python path and the zope.etree-configure.zcml file
+*z3c.etree* is installed like any other Zope3 module. That is it should be
+copied verbatim into your Python path and the z3c.etree-configure.zcml file
 should be copied to the package-includes directory for each instance of Zope
 that requires this package. (Once I figure out how to, I will use Python eggs
 for the installation process.)
 
-Now each of the zope.etree-configure.zcml files that exist in a instances
+Now each of the z3c.etree-configure.zcml files that exist in a instances
 package-includes directory can be edited to configure which ElementTree
 implementation to use within that instance.
 
 To configure a particular ElementTree implementation for an instance the
-zope.etree-configure.zcml file should contain only one ZCML utility
+z3c.etree-configure.zcml file should contain only one ZCML utility
 declaration. For example to configure an instance use lxml
-zope.etree-configure.zcml should contain the the following::
+z3c.etree-configure.zcml should contain the the following::
 
   <utility
-     factory="zope.etree.etree.LxmlEtree"
+     factory="z3c.etree.etree.LxmlEtree"
      />
 
-Where *zope.etree.etree.LxmlEtree* is the proxy object that wraps the lxml
+Where *z3c.etree.etree.LxmlEtree* is the proxy object that wraps the lxml
 implementation. Currently the other implementations include:
 
-+ *zope.etree.etree.EtreeEtree* - proxy for the pure python *elementtree*
++ *z3c.etree.etree.EtreeEtree* - proxy for the pure python *elementtree*
   module.
 
-+ *zope.etree.etree.EtreePy25* - proxy for the ElementTree implementation
++ *z3c.etree.etree.EtreePy25* - proxy for the ElementTree implementation
   included in Python 2.5's standard library.
 
 Tests setup
@@ -57,23 +57,23 @@ Tests setup
 Some setup for the developers tests.
 
   >>> from zope import component
-  >>> import zope.etree.interfaces
+  >>> import z3c.etree.interfaces
 
 This happens automatically during Zope startup.
 
-  >>> from zope.etree.testing import etreeSetup, etreeTearDown
-  >>> from zope.etree.testing import assertXMLEqual
+  >>> from z3c.etree.testing import etreeSetup, etreeTearDown
+  >>> from z3c.etree.testing import assertXMLEqual
   >>> dummy = etreeSetup()
 
 Developers
 ==========
 
-Here are some examples for how to use *zope.etree* with your own code.
+Here are some examples for how to use *z3c.etree* with your own code.
 
 To generate a Element object with the tag *DAV:getcontenttype* all we have
 to do is:
 
-  >>> etree = component.getUtility(zope.etree.interfaces.IEtree)
+  >>> etree = component.getUtility(z3c.etree.interfaces.IEtree)
   >>> elem = etree.Element("{DAV:}getcontenttype")
   >>> assertXMLEqual(etree.tostring(elem), """
   ...    <ns0:getcontenttype xmlns:ns0="DAV:"/>""")
@@ -89,16 +89,16 @@ Testing
 =======
 
 For developers who are writing unit tests for their code that uses
-*zope.etree*. They should call the method *zope.etree.testing.etreeSetup* in
+*z3c.etree*. They should call the method *z3c.etree.testing.etreeSetup* in
 there tests setup code, in order to correctly register a ElementTree utility
 for use within their tests. And similar, call the method
-*zope.etree.testing.etreeTearDown* in their teardown code. See the Setup
+*z3c.etree.testing.etreeTearDown* in their teardown code. See the Setup
 and Teardown sections of this file.
 
-The *etreeSetup* method will load and parse the *zope.etree-configure.zcml*
-file from within the *zope.etree* module (NOT the file from the instance). So
+The *etreeSetup* method will load and parse the *z3c.etree-configure.zcml*
+file from within the *z3c.etree* module (NOT the file from the instance). So
 if the default utility defined in this file, which is
-*zope.etree.etree.EtreeEtree*, doesn't apply to your system due to a missing
+*z3c.etree.etree.EtreeEtree*, doesn't apply to your system due to a missing
 module for example, then this file should be edited to reflect this.
 
 Teardown

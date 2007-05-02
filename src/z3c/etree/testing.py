@@ -21,8 +21,8 @@ import os
 import zope.component
 from zope.testing import doctest
 
-import zope.etree
-import zope.etree.etree
+import z3c.etree
+import z3c.etree.etree
 
 #
 # Setup for Zope etree. 
@@ -31,10 +31,10 @@ import zope.etree.etree
 engine_env_key = "ELEMENTTREE_ENGINE"
 
 known_engines = {
-    "cElementTree": ("cElementTree", zope.etree.etree.CEtree),
-    "elementtree": ("elementtree.ElemenTree", zope.etree.etree.EtreeEtree),
-    "lxml": ("lxml.etree", zope.etree.etree.LxmlEtree),
-    "py25": ("xml.etree", zope.etree.etree.EtreePy25),
+    "cElementTree": ("cElementTree", z3c.etree.etree.CEtree),
+    "elementtree": ("elementtree.ElemenTree", z3c.etree.etree.EtreeEtree),
+    "lxml": ("lxml.etree", z3c.etree.etree.LxmlEtree),
+    "py25": ("xml.etree", z3c.etree.etree.EtreePy25),
     }
 
 def etreeSetup(test = None):
@@ -68,7 +68,7 @@ def etreeSetup(test = None):
     # error in trying to teardown the engine. The getEngine method caches
     # the utility lookup bypassing the need for the global site manger
     # to know about the utility and thus not causing errors during tear down.
-    engine = zope.etree.getEngine()
+    engine = z3c.etree.getEngine()
     return engine
 
 
@@ -79,9 +79,9 @@ def etreeTearDown(test = None):
         del test.globs["etree"]
         del test.globs["assertXMLEqual"]
     if etreeEngine is None:
-        etreeEngine = zope.etree.getEngine()
+        etreeEngine = z3c.etree.getEngine()
     zope.component.getGlobalSiteManager().unregisterUtility(etreeEngine)
-    zope.etree._utility = None # clear the cache
+    z3c.etree._utility = None # clear the cache
 
 #
 # Handy methods for testing if two xml fragmenets are equal.
@@ -118,7 +118,7 @@ def _assertTextEqual(want, got, optionflags):
       >>> _assertTextEqual("test", "nottest", XMLDATA)
       (False, "''test' != 'nottest'' have different element content.")
 
-      >>> etree = zope.etree.getEngine()
+      >>> etree = z3c.etree.getEngine()
       >>> _assertTextEqual("test", etree.Element("test"), XMLDATA)
       Traceback (most recent call last):
       ...
@@ -146,7 +146,7 @@ def _assertTextEqual(want, got, optionflags):
 def _assertXMLElementEqual(want, got, optionflags):
     # See assertXMLEqual for tests - it is easier to the tests with strings that
     # get converted to element tree objects in assertXMLEqual.
-    etree = zope.etree.getEngine()
+    etree = z3c.etree.getEngine()
 
     if want.tag != got.tag:
         return False, "%r != %r different tag name." %(want.tag, got.tag)
@@ -294,7 +294,7 @@ def assertXMLEqual(want, got):
 
     Test passing elementtree objects through the first arguement.
 
-      >>> etree = zope.etree.getEngine()
+      >>> etree = z3c.etree.getEngine()
       >>> elroot = etree.Element('test')
       >>> eltree = etree.ElementTree(elroot)
 
@@ -307,7 +307,7 @@ def assertXMLEqual(want, got):
       >>> assertXMLEqual(elroot, '<test />')
 
     """
-    etree = zope.etree.getEngine()
+    etree = z3c.etree.getEngine()
 
     if isinstance(want, (str, unicode)):
         want = etree.fromstring(want)
@@ -330,7 +330,7 @@ def assertXMLEqual(want, got):
 #
 
 def _assertXMLElement(want, got, optionflags):
-    etree = zope.etree.getEngine()
+    etree = z3c.etree.getEngine()
 
     def clean_string(s):
         if not isinstance(s, (str, unicode)):

@@ -36,7 +36,7 @@ from zope.testing import testrunner
 from zope.interface.verify import verifyObject
 from zope.app.testing import placelesssetup
 
-import zope.etree.etree
+import z3c.etree.etree
 from interfaces import IEtree
 from testing import etreeSetup, etreeTearDown
 
@@ -98,7 +98,7 @@ class BaseEtreeTestCase(unittest.TestCase):
 class OrigElementTreeTestCase(BaseEtreeTestCase):
 
     def setUp(self):
-        from zope.etree.etree import EtreeEtree
+        from z3c.etree.etree import EtreeEtree
         self.etree = EtreeEtree()
 
     def tearDown(self):
@@ -108,7 +108,7 @@ class OrigElementTreeTestCase(BaseEtreeTestCase):
 class CElementTreeTestCase(BaseEtreeTestCase):
 
     def setUp(self):
-        from zope.etree.etree import CEtree
+        from z3c.etree.etree import CEtree
         self.etree = CEtree()
 
     def tearDown(self):
@@ -118,7 +118,7 @@ class CElementTreeTestCase(BaseEtreeTestCase):
 class LXMLElementTreeTestCase(BaseEtreeTestCase):
 
     def setUp(self):
-        from zope.etree.etree import LxmlEtree
+        from z3c.etree.etree import LxmlEtree
         self.etree = LxmlEtree()
 
     def tearDown(self):
@@ -147,7 +147,7 @@ class LXMLElementTreeTestCase(BaseEtreeTestCase):
 class Python25ElementTreeTestCase(BaseEtreeTestCase):
 
     def setUp(self):
-        from zope.etree.etree import EtreePy25
+        from z3c.etree.etree import EtreePy25
         self.etree = EtreePy25()
 
     def tearDown(self):
@@ -160,7 +160,7 @@ class NoElementTreePresentTestCase(unittest.TestCase):
 
     def test_warn(self):
         self.fail("""
-        WARNING: zope.etree needs ElementTree installed in order to run.
+        WARNING: z3c.etree needs ElementTree installed in order to run.
         """)
 
 
@@ -231,8 +231,8 @@ class doctestsSetup(object):
         test.globs['old_configure_logging'] = testrunner.configure_logging
         testrunner.configure_logging = lambda : None
         test.globs['old_engine'] = os.environ.get(
-            zope.etree.testing.engine_env_key)
-        os.environ[zope.etree.testing.engine_env_key] = self.engine_key
+            z3c.etree.testing.engine_env_key)
+        os.environ[z3c.etree.testing.engine_env_key] = self.engine_key
 
 
 def doctestsTearDown(test):
@@ -242,7 +242,7 @@ def doctestsTearDown(test):
     sys.modules.update(test.globs['saved-sys-info'][2])
     testrunner.configure_logging = test.globs['old_configure_logging']
     del test.globs['old_configure_logging']
-    del os.environ[zope.etree.testing.engine_env_key]
+    del os.environ[z3c.etree.testing.engine_env_key]
     del test.globs['old_engine']
 
 
@@ -273,21 +273,21 @@ def test_suite():
         import elementtree
         suite.addTest(unittest.makeSuite(OrigElementTreeTestCase))
         suite.addTest(doctest.DocTestSuite(
-            "zope.etree.testing",
+            "z3c.etree.testing",
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.EtreeEtree()),
+            setUp = setUp(z3c.etree.etree.EtreeEtree()),
             tearDown = tearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctesttests.txt", package = zope.etree,
+            "doctesttests.txt", package = z3c.etree,
             checker = checker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = doctestsSetup("elementtree"),
             tearDown = doctestsTearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctestssuccess.txt", package = zope.etree,
-            checker = zope.etree.testing.xmlOutputChecker,
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.EtreeEtree()),
+            setUp = setUp(z3c.etree.etree.EtreeEtree()),
             tearDown = tearDown))
         foundetree = True
     except ImportError:
@@ -297,21 +297,21 @@ def test_suite():
         import cElementTree
         suite.addTest(unittest.makeSuite(CElementTreeTestCase))
         suite.addTest(doctest.DocTestSuite(
-            "zope.etree.testing",
+            "z3c.etree.testing",
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.CEtree()),
+            setUp = setUp(z3c.etree.etree.CEtree()),
             tearDown = tearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctesttests.txt", package = zope.etree,
+            "doctesttests.txt", package = z3c.etree,
             checker = checker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = doctestsSetup("cElementTree"),
             tearDown = doctestsTearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctestssuccess.txt", package = zope.etree,
-            checker = zope.etree.testing.xmlOutputChecker,
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.CEtree()),
+            setUp = setUp(z3c.etree.etree.CEtree()),
             tearDown = tearDown))
         foundetree = True
     except ImportError:
@@ -321,21 +321,21 @@ def test_suite():
         import lxml.etree
         suite.addTest(unittest.makeSuite(LXMLElementTreeTestCase))
         suite.addTest(doctest.DocTestSuite(
-            "zope.etree.testing",
+            "z3c.etree.testing",
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.LxmlEtree()),
+            setUp = setUp(z3c.etree.etree.LxmlEtree()),
             tearDown = tearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctesttests.txt", package = zope.etree,
+            "doctesttests.txt", package = z3c.etree,
             checker = checker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = doctestsSetup("lxml"),
             tearDown = doctestsTearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctestssuccess.txt", package = zope.etree,
-            checker = zope.etree.testing.xmlOutputChecker,
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.LxmlEtree()),
+            setUp = setUp(z3c.etree.etree.LxmlEtree()),
             tearDown = tearDown))
         foundetree = True
     except ImportError:
@@ -345,21 +345,21 @@ def test_suite():
         import xml.etree
         suite.addTest(unittest.makeSuite(Python25ElementTreeTestCase))
         suite.addTest(doctest.DocTestSuite(
-            "zope.etree.testing",
+            "z3c.etree.testing",
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.EtreePy25()),
+            setUp = setUp(z3c.etree.etree.EtreePy25()),
             tearDown = tearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctesttests.txt", package = zope.etree,
+            "doctesttests.txt", package = z3c.etree,
             checker = checker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = doctestsSetup("py25"),
             tearDown = doctestsTearDown))
         suite.addTest(doctest.DocFileSuite(
-            "doctestssuccess.txt", package = zope.etree,
-            checker = zope.etree.testing.xmlOutputChecker,
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
-            setUp = setUp(zope.etree.etree.EtreePy25()),
+            setUp = setUp(z3c.etree.etree.EtreePy25()),
             tearDown = tearDown))
         foundetree = True
     except ImportError:
@@ -370,14 +370,14 @@ def test_suite():
     else:
         # rerun the current testing doctest using the default setUp
         suite.addTest(doctest.DocTestSuite(
-            "zope.etree.testing",
+            "z3c.etree.testing",
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = etreeSetup,
             tearDown = etreeTearDown))
 
         # run the README tests to make the documentation does something
         suite.addTest(doctest.DocFileSuite(
-            "README.txt", package = "zope.etree"))
+            "README.txt", package = "z3c.etree"))
 
         # test teardown
         suite.addTest(unittest.makeSuite(UnusedEtree))

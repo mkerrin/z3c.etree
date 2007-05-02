@@ -4,14 +4,14 @@
       ElementTree support for Zope (you probable what to edit this)
 
       This file also configures which ElementTree engine to use for all the
-      zope.etree unit tests also. See the README.txt file.
+      z3c.etree unit tests also. See the README.txt file.
     -->
 
   <!--
       uses the *elementtree* module.
     -->
   <utility
-     factory="zope.etree.etree.EtreeEtree"
+     factory="z3c.etree.etree.EtreeEtree"
      />
 
   <!--
@@ -19,7 +19,7 @@
     -->
 <!--
   <utility
-     factory="zope.etree.etree.CEtree"
+     factory="z3c.etree.etree.CEtree"
      />
 -->
 
@@ -28,7 +28,7 @@
     -->
 <!--
   <utility
-     factory="zope.etree.etree.LxmlEtree"
+     factory="z3c.etree.etree.LxmlEtree"
      />
 -->
 
@@ -37,7 +37,7 @@
     -->
 <!--
   <utility
-     factory="zope.etree.etree.EtreePy25"
+     factory="z3c.etree.etree.EtreePy25"
      />
 -->
 
