@@ -134,15 +134,15 @@ class LXMLElementTreeTestCase(BaseEtreeTestCase):
     def test_xmltreebulider(self):
         self.assertRaises(NotImplementedError, self.etree.XMLTreeBuilder)
 
-    def test_namespaces(self):
+    def test_mightbebroken_namespaces(self):
         # When we have a element whoes namespace declaration is declared
-        # in a parent element lxml doesn't print out the namespace
-        # declaration by default.
+        # in a parent element lxml doesn't print out this namespace.
+        # This is a feature or bug of lxml but I don't think making work
+        # arounds is a good idea.
         multinselemstr = """<D:prop xmlns:D="DAV:"><D:owner><H:href xmlns:H="examplens">http://example.org</H:href></D:owner></D:prop>"""
         multinselem = self.etree.fromstring(multinselemstr)
         self.assertEqual(self.etree.tostring(multinselem[0]),
-                         """<D:owner xmlns:D="DAV:"><H:href xmlns:H="examplens">http://example.org</H:href></D:owner>""")
-
+                         """<D:owner><H:href xmlns:H="examplens">http://example.org</H:href></D:owner>""")
 
 class Python25ElementTreeTestCase(BaseEtreeTestCase):
 
@@ -170,12 +170,14 @@ class setUp(object):
         self.etree = etree
 
     def __call__(self, test):
-        component.getGlobalSiteManager().registerUtility(self.etree)
+        component.getGlobalSiteManager().registerUtility(
+            self.etree, provided = IEtree)
         test.globs["etree"] = self.etree
 
 
 def tearDown(test):
-    component.getGlobalSiteManager().unregisterUtility(test.globs["etree"])
+    component.getGlobalSiteManager().unregisterUtility(
+        test.globs["etree"], provided = IEtree)
     del test.globs["etree"]
 
 
@@ -289,6 +291,21 @@ def test_suite():
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = setUp(z3c.etree.etree.EtreeEtree()),
             tearDown = tearDown))
+        suite.addTest(doctest.DocTestSuite(
+            "z3c.etree.testing",
+            optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
+            setUp = setUp(elementtree.ElementTree),
+            tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
+            optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
+            setUp = setUp(elementtree.ElementTree),
+            tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "README.txt", package = z3c.etree,
+            setUp = doctestsSetup("elementtree"),
+            tearDown = doctestsTearDown))
         foundetree = True
     except ImportError:
         pass
@@ -313,6 +330,21 @@ def test_suite():
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = setUp(z3c.etree.etree.CEtree()),
             tearDown = tearDown))
+        suite.addTest(doctest.DocTestSuite(
+            "z3c.etree.testing",
+            optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
+            setUp = setUp(cElementTree),
+            tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
+            optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
+            setUp = setUp(cElementTree),
+            tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "README.txt", package = z3c.etree,
+            setUp = doctestsSetup("cElementTree"),
+            tearDown = doctestsTearDown))
         foundetree = True
     except ImportError:
         pass
@@ -337,6 +369,21 @@ def test_suite():
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = setUp(z3c.etree.etree.LxmlEtree()),
             tearDown = tearDown))
+        suite.addTest(doctest.DocTestSuite(
+            "z3c.etree.testing",
+            optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
+            setUp = setUp(lxml.etree),
+            tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "doctestssuccess.txt", package = z3c.etree,
+            checker = z3c.etree.testing.xmlOutputChecker,
+            optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
+            setUp = setUp(lxml.etree),
+            tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "README.txt", package = z3c.etree,
+            setUp = doctestsSetup("lxml"),
+            tearDown = doctestsTearDown))
         foundetree = True
     except ImportError:
         pass
@@ -361,6 +408,10 @@ def test_suite():
             optionflags = doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE,
             setUp = setUp(z3c.etree.etree.EtreePy25()),
             tearDown = tearDown))
+        suite.addTest(doctest.DocFileSuite(
+            "README.txt", package = z3c.etree,
+            setUp = doctestsSetup("py25"),
+            tearDown = doctestsTearDown))
         foundetree = True
     except ImportError:
         pass

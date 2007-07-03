@@ -22,6 +22,7 @@ import zope.component
 from zope.testing import doctest
 
 import z3c.etree
+import z3c.etree.interfaces
 import z3c.etree.etree
 
 #
@@ -31,32 +32,39 @@ import z3c.etree.etree
 engine_env_key = "ELEMENTTREE_ENGINE"
 
 known_engines = {
-    "cElementTree": ("cElementTree", z3c.etree.etree.CEtree),
-    "elementtree": ("elementtree.ElemenTree", z3c.etree.etree.EtreeEtree),
-    "lxml": ("lxml.etree", z3c.etree.etree.LxmlEtree),
-    "py25": ("xml.etree", z3c.etree.etree.EtreePy25),
+    "cElementTree": "cElementTree",
+    "elementtree": "elementtree.ElementTree",
+    "lxml": "lxml.etree",
+    "py25": "xml.etree",
     }
+
+
+def importEngine(modname):
+    components = modname.split(".")
+    engine = __import__(components[0])
+    for comp in components[1:]:
+        engine = getattr(engine, comp)
+    return engine
+
 
 def etreeSetup(test = None):
     engine = None
 
     if engine_env_key in os.environ:
-        engine = known_engines[os.environ[engine_env_key]][1]()
+        engine = importEngine(known_engines[os.environ[engine_env_key]])
     else:
-        for key, info in known_engines.items():
-            modname, factory = info
+        for key, modname in known_engines.items():
             try:
-                __import__(modname)
+                engine = __import__(modname)
+                break
             except ImportError:
                 pass
-            else:
-                engine = factory()
-                break
 
     if engine is None:
         raise ValueError("Failed to import a known element tree implementation")
 
-    zope.component.getGlobalSiteManager().registerUtility(engine)
+    zope.component.getGlobalSiteManager().registerUtility(
+        engine, provided = z3c.etree.interfaces.IEtree)
 
     if test is not None:
         test.globs["etree"] = engine
@@ -80,7 +88,8 @@ def etreeTearDown(test = None):
         del test.globs["assertXMLEqual"]
     if etreeEngine is None:
         etreeEngine = z3c.etree.getEngine()
-    zope.component.getGlobalSiteManager().unregisterUtility(etreeEngine)
+    zope.component.getGlobalSiteManager().unregisterUtility(
+        etreeEngine, provided = z3c.etree.interfaces.IEtree)
     z3c.etree._utility = None # clear the cache
 
 #
@@ -149,7 +158,8 @@ def _assertXMLElementEqual(want, got, optionflags):
     etree = z3c.etree.getEngine()
 
     if want.tag != got.tag:
-        return False, "%r != %r different tag name." %(want.tag, got.tag)
+        return False, "%r != %r different tag name." %(str(want.tag),
+                                                       str(got.tag))
     if len(want) != len(got):
         return False, "%d != %d different number of subchildren on %r." %(
             len(want), len(got), want.tag)

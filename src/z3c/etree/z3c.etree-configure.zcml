@@ -11,7 +11,8 @@
       uses the *elementtree* module.
     -->
   <utility
-     factory="z3c.etree.etree.EtreeEtree"
+     factory="elementtree.ElementTree"
+     provided="z3c.etree.interfaces.IEtree"
      />
 
   <!--
@@ -19,7 +20,8 @@
     -->
 <!--
   <utility
-     factory="z3c.etree.etree.CEtree"
+     factory="cElementTree"
+     provided="z3c.etree.interfaces.IEtree"
      />
 -->
 
@@ -28,7 +30,8 @@
     -->
 <!--
   <utility
-     factory="z3c.etree.etree.LxmlEtree"
+     factory="lxml.etree"
+     provided="z3c.etree.interfaces.IEtree"
      />
 -->
 
@@ -37,7 +40,8 @@
     -->
 <!--
   <utility
-     factory="z3c.etree.etree.EtreePy25"
+     factory="xml.etree.ElementTree"
+     provided="z3c.etree.interfaces.IEtree"
      />
 -->
 

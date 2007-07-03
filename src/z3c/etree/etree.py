@@ -118,9 +118,3 @@ class LxmlEtree(BaseEtree):
     def __init__(self):
         from lxml import etree
         self.etree = etree
-
-    def tostring(self, element, encoding = None):
-        """LXML loses the namespace information whenever we print out an
-        element who namespace was defined in 
-        """
-        return self.etree.tostring(copy.copy(element), encoding)
