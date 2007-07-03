@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name = "z3c.etree",
-      version = "0.9",
+      version = "0.9.1",
       author = "Michael Kerrin",
       author_email = "michael.kerrin@openapp.ie",
       url = "http://svn.zope.org/z3c.etree",

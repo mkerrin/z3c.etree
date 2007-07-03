@@ -41,7 +41,7 @@ known_engines = {
 
 def importEngine(modname):
     components = modname.split(".")
-    engine = __import__(components[0])
+    engine = __import__(modname)
     for comp in components[1:]:
         engine = getattr(engine, comp)
     return engine

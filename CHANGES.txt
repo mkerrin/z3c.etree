@@ -1,0 +1,14 @@
+====================
+Changes in z3c.etree
+====================
+
+0.9.1
+=====
+
+- fix bug in getting access to the elementree engine
+
+0.9
+===
+
+- Start registering the elmenttree modules directly instead of using some
+  proxy objects.
