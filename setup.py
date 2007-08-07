@@ -18,4 +18,5 @@ setup(name = "z3c.etree",
                                     "lxml"]),
 
       include_package_data = True,
+      test_suite='z3c.etree.tests.test_suite',
       zip_safe = False)
