@@ -116,6 +116,12 @@ def _assertTextEqual(want, got, optionflags):
       >>> _assertTextEqual("test", "test", XMLDATA)
       (True, None)
 
+    Normalize Whitespace
+
+      >>> _assertTextEqual("test\\nthis", "test this", 
+      ...                  XMLDATA|doctest.NORMALIZE_WHITESPACE)
+      (True, None)
+
     Unequal values.
 
       >>> _assertTextEqual("test", None, XMLDATA)
@@ -147,7 +153,8 @@ def _assertTextEqual(want, got, optionflags):
            not isinstance(tgot, (str, unicode)):
         raise ValueError("_assertTextEqual can only tests text content")
 
-    if twant == tgot:
+    checker = doctest.OutputChecker()
+    if checker.check_output(twant, tgot, optionflags):
         return True, None
     return False, "'%r != %r' have different element content." %(want, got)
 
