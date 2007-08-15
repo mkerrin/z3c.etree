@@ -55,7 +55,7 @@ def etreeSetup(test = None):
     else:
         for key, modname in known_engines.items():
             try:
-                engine = __import__(modname)
+                engine = importEngine(modname)
                 break
             except ImportError:
                 pass
