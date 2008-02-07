@@ -34,7 +34,6 @@ from zope.testing import doctest
 from zope.testing import renormalizing
 from zope.testing import testrunner
 from zope.interface.verify import verifyObject
-from zope.app.testing import placelesssetup
 
 import z3c.etree.etree
 from interfaces import IEtree
@@ -249,15 +248,11 @@ def doctestsTearDown(test):
 
 
 class UnusedEtree(unittest.TestCase):
-    # Catch problem when the unittest tear down is broken because the
-    # placelesssetup module clears the global site manager.
 
     def setUp(self):
-        placelesssetup.setUp()
         etreeSetup()
 
     def tearDown(self):
-        placelesssetup.tearDown()
         etreeTearDown()
 
     def test_simple(self):
