@@ -2,6 +2,11 @@
 Changes in z3c.etree
 ====================
 
+0.9.2
+=====
+
+- Allow the use of NORMALIZE_WHITESPACE with tag contents.
+
 0.9.1
 =====
 
