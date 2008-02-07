@@ -81,6 +81,29 @@ Some simple basic tests.
       '<test><subtest attr="d">XXX</subtest></test>'
   XML differences:
       'subtest' expected to find the 'a' attribute.
+  ----------------------------------------------------------------------
+  File doctests.txt
+  Failed example:
+   doctest:+XMLDATA
+  Expected:
+     <D:multistatus xmlns:D='DAV:'>
+       <D:response>
+         <D:prop>
+           <test2/>
+           <test1/>
+         </D:prop>
+       </D:response>
+     </D:multistatus>
+  Got:
+     <D:multistatus xmlns:D='DAV:'>
+     <D:response>
+        <D:prop>
+          <test1/>
+          <test2/>
+        </D:prop>
+     </D:response></D:multistatus>
+  XML differences:
+     'test2' != 'test1' different tag name.
   <BLANKLINE>
     Ran N tests with N failures and N errors in N.NNN seconds.
   True

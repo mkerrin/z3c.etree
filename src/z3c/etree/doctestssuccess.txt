@@ -9,3 +9,24 @@ String comparison still works
 
   >>> 'Hello, world!'
   'Hello, world!'
+
+Order doesn't matter with XMLDATA_IGNOREORDER
+---------------------------------------------
+
+  >>> data = '''<D:multistatus xmlns:D='DAV:'>
+  ... <D:response>
+  ...    <D:prop>
+  ...      <test1/>
+  ...      <test2/>
+  ...    </D:prop>
+  ... </D:response></D:multistatus>'''
+
+  >>> print data #doctest:+XMLDATA_IGNOREORDER
+  <D:multistatus xmlns:D='DAV:'>
+    <D:response>
+      <D:prop>
+        <test2/>
+        <test1/>
+      </D:prop>
+    </D:response>
+  </D:multistatus>

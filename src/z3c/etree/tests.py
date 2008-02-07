@@ -201,7 +201,7 @@ checker = renormalizing.RENormalizing([
         (re.compile('import pdb; pdb'), 'Pdb()'), # Py 2.3
 
         # Omit the number of tests ran
-        (re.compile(r'Ran \d tests with \d failures and \d errors'),
+        (re.compile(r'Ran \d+ tests with \d+ failures and \d+ errors'),
                     r'Ran N tests with N failures and N errors'),
         ])
 

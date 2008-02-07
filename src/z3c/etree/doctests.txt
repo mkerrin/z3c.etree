@@ -41,7 +41,7 @@ Recursion ok
   '<test><subtest attr="d">XXX</subtest></test>'
 
 ElementTree objects
-===================
+-------------------
 
 Got to see what happens when 'got' argument is an ElementTree object.
 
@@ -53,3 +53,36 @@ Got to see what happens when 'got' argument is an ElementTree object.
     <subtest>
     </subtest>
   </test>
+
+Ordering matters with XMLDATA
+-----------------------------
+
+  >>> data = '''<D:multistatus xmlns:D='DAV:'>
+  ... <D:response>
+  ...    <D:prop>
+  ...      <test1/>
+  ...      <test2/>
+  ...    </D:prop>
+  ... </D:response></D:multistatus>'''
+
+  >>> print data #doctest:+XMLDATA
+  <D:multistatus xmlns:D='DAV:'>
+    <D:response>
+      <D:prop>
+        <test2/>
+        <test1/>
+      </D:prop>
+    </D:response>
+  </D:multistatus>
+
+But not with XMLDATA_IGNOREORDER
+
+  >>> print data #doctest:+XMLDATA_IGNOREORDER
+  <D:multistatus xmlns:D='DAV:'>
+    <D:response>
+      <D:prop>
+        <test2/>
+        <test1/>
+      </D:prop>
+    </D:response>
+  </D:multistatus>

@@ -159,6 +159,47 @@ def _assertTextEqual(want, got, optionflags):
     return False, "'%r != %r' have different element content." %(want, got)
 
 
+def _assertSubXMLElements(want, got, optionflags):
+    for index in range(0, len(want)):
+        result, msg = _assertXMLElementEqual(
+            want[index], got[index], optionflags)
+        if not result:
+            return result, msg
+
+    return True, None
+
+
+def _assertSubXMLElementsUnordered(want, got, optionflags):
+    # First we check all the elements in order and if one of the elements
+    # tags doesn't match what we expected then we start to call the `findall'
+    # method to try and find the element we expected. The reason for this is
+    # that if we do have multiple elements in an XML fragment with the same
+    # tag it is very hard to report on which element didn't match which. But
+    # in the case of WebDAV this works a treat since the ordering of
+    # properties is depended on the Zope component architecture but we never
+    # have multiple properties in these XML documents.
+    for index in range(0, len(want)):
+        wantchild = want[index]
+        gotchild = got[index]
+        if wantchild.tag != gotchild.tag:
+            gotchild = got.findall(str(wantchild.tag))
+            if len(gotchild) == 0:
+                return False, \
+                       "Failed to find the element %r in the fragment %r." %(
+                           str(wantchild.tag), str(got.tag))
+            if len(gotchild) > 1:
+                return False, "Too many %r sub-elements where found in %r. " \
+                              "Ordering algorithim broke down." %(
+                    str(wantchild.tag), str(got.tag))
+            gotchild = gotchild[0]
+        result, msg = _assertXMLElementEqual(
+            wantchild, gotchild, optionflags)
+        if not result:
+            return result, msg
+
+    return True, None
+
+
 def _assertXMLElementEqual(want, got, optionflags):
     # See assertXMLEqual for tests - it is easier to the tests with strings that
     # get converted to element tree objects in assertXMLEqual.
@@ -187,13 +228,29 @@ def _assertXMLElementEqual(want, got, optionflags):
                False, "%r attribute has different value for the %r tag." %(
                    attrib, want.tag)
 
-    for index in range(0, len(want)):
-        result, msg = _assertXMLElementEqual(
-            want[index], got[index], optionflags)
-        if not result:
-            return result, msg
+    if optionflags & XMLDATA_IGNOREORDER:
+        return _assertSubXMLElementsUnordered(want, got, optionflags)
+    else:
+        return _assertSubXMLElements(want, got, optionflags)
 
-    return True, None
+
+def _cleanTree(want, got):
+    etree = z3c.etree.getEngine()
+
+    if isinstance(want, (str, unicode)):
+        want = etree.fromstring(want)
+    if isinstance(got, (str, unicode)):
+        got = etree.fromstring(got)
+
+    if getattr(want, "getroot", None) is not None:
+        # Most then likely a ElementTree object.
+        want = want.getroot()
+
+    if getattr(got, "getroot", None) is not None:
+        # Most then likely a ElementTree object.
+        got = got.getroot()
+
+    return want, got
 
 
 def assertXMLEqual(want, got):
@@ -324,22 +381,144 @@ def assertXMLEqual(want, got):
       >>> assertXMLEqual(elroot, '<test />')
 
     """
-    etree = z3c.etree.getEngine()
+    want, got = _cleanTree(want, got)
 
-    if isinstance(want, (str, unicode)):
-        want = etree.fromstring(want)
-    if isinstance(got, (str, unicode)):
-        got = etree.fromstring(got)
-
-    if getattr(want, "getroot", None) is not None:
-        # Most then likely a ElementTree object.
-        want = want.getroot()
-
-    if getattr(got, "getroot", None) is not None:
-        # Most then likely a ElementTree object.
-        got = got.getroot()
-        
     result, msg = _assertXMLElementEqual(want, got, XMLDATA)
+    assert result, msg
+
+
+def assertXMLEqualIgnoreOrdering(want, got):
+    """
+
+      >>> assertXMLEqualIgnoreOrdering('<test>xml</test>', '<test>xml</test>')
+
+    Re-ording sub-elements of an XML fragment still passes with this method.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><a>Content</a><b>Content</b></test>',
+      ...    '<test><a>Content</a><b>Content</b></test>')
+
+    Now we re-order the `a' and `b' elements.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><a>Content</a><b>Content</b></test>',
+      ...    '<test><b>Content</b><a>Content</a></test>')
+
+    But with the previous `assertXMLEqual' it still fails.
+
+      >>> assertXMLEqual(
+      ...    '<test><a>Content</a><b>Content</b></test>',
+      ...    '<test><b>Content</b><a>Content</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: 'a' != 'b' different tag name.
+
+    Ording still picks up on different attributes.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><a attr="1">Content</a><b>Content</b></test>',
+      ...    '<test><b>Content</b><a>Content</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: 1 != 0 different number of attributes on 'a'.
+
+    And on different content.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><a>Different content</a><b>Content</b></test>',
+      ...    '<test><b>Content</b><a>Content</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: ''Different content' != 'Content'' have different element content.
+
+    Missing element.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><b>Content</b></test>',
+      ...    '<test><b>Content</b><a>Content</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: 1 != 2 different number of subchildren on 'test'.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><c>Content</c><b>Content</b></test>',
+      ...    '<test><b>Content</b><a>Content</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: Failed to find the element 'c' in the fragment 'test'.
+
+    Un-ordering matching does not work when we have more then one sub-element
+    with the same tag. This is problematic as their is no way for me to find
+    the correct expected element reliably.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...    '<test><a>Content</a><b>Content</b><a>Test</a></test>',
+      ...    '<test><b>Content</b><a>Content</a><a>Test</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: Too many 'a' sub-elements where found in 'test'. Ordering algorithim broke down.
+
+    But if the ordering breaks down within a level of the XML fragment that
+    doesn't contain duplicate elements then everything works. Even though we
+    have duplicate `r' elements it is only on the third level that the sub
+    ordering breaks down and so the documents match.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...  '<test><r><a>Content</a><b>Content</b></r><r><a>Test</a></r></test>',
+      ...  '<test><r><b>Content</b><a>Content</a></r><r><a>Test</a></r></test>')
+
+      >>> etree = z3c.etree.getEngine()
+
+    Pass `assertXMLEqualIgnoreOrdering' an actual elementtree element object
+    whose tag was setup via the etree.QName method. Make sure that we don't
+    have any errors in processing this element.
+
+      >>> el = etree.Element('test')
+      >>> el.append(etree.Element(etree.QName('testns:', 'a')))
+      >>> el[-1].text = 'Content'
+      >>> el.append(etree.Element('{testns:}b'))
+      >>> el[-1].text = 'Content'
+
+      >>> assertXMLEqualIgnoreOrdering(el,
+      ...  '<test><b xmlns="testns:">Content</b><a xmlns="testns:">Content</a></test>')
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...  '<test><b xmlns="testns:">Content</b><a xmlns="testns:">Content</a></test>',
+      ...  el)
+
+    Also make sure that the errors messages returned by
+    `assertXMLEqualIgnoreOrdering' when we have a QName tag are readable.
+
+      >>> assertXMLEqualIgnoreOrdering(
+      ...  '<test><b>Content</b><a>Content</a></test>',
+      ...  el)
+      Traceback (most recent call last):
+      ...
+      AssertionError: Failed to find the element 'b' in the fragment 'test'.
+
+      >>> assertXMLEqualIgnoreOrdering(el,
+      ...  '<test><b>Content</b><a>Content</a></test>')
+      Traceback (most recent call last):
+      ...
+      AssertionError: Failed to find the element '{testns:}a' in the fragment 'test'.
+
+    Finally - test passing elementtree objects through the first arguement.
+
+      >>> elroot = etree.Element('test')
+      >>> eltree = etree.ElementTree(elroot)
+
+      >>> assertXMLEqual(eltree, '<test />')
+
+      >>> assertXMLEqual(eltree, etree.ElementTree(etree.Element('test')))
+
+      >>> assertXMLEqual(eltree, etree.Element('test'))
+
+      >>> assertXMLEqual(elroot, '<test />')
+
+    """
+    want, got = _cleanTree(want, got)
+
+    result, msg = _assertXMLElementEqual(want, got, XMLDATA_IGNOREORDER)
     assert result, msg
 
 #
@@ -365,10 +544,13 @@ def _assertXMLElement(want, got, optionflags):
 
 XMLDATA = doctest.register_optionflag("XMLDATA")
 
+XMLDATA_IGNOREORDER = doctest.register_optionflag("XMLDATA_IGNOREORDER")
+
+
 class XMLOutputChecker(doctest.OutputChecker):
 
     def check_output(self, want, got, optionflags):
-        if optionflags & XMLDATA:
+        if optionflags & XMLDATA or optionflags & XMLDATA_IGNOREORDER:
             if want and got: # it only makes sense to compare actual data.
                 result, msg = _assertXMLElement(want, got, optionflags)
                 return result
@@ -376,7 +558,7 @@ class XMLOutputChecker(doctest.OutputChecker):
             self, want, got, optionflags)
 
     def output_difference(self, example, got, optionflags):
-        if optionflags & XMLDATA:
+        if optionflags & XMLDATA or optionflags & XMLDATA_IGNOREORDER:
             want = example.want
             if want and got: # it only makes sense to compare actual data
                 error = 'Expected:\n%sGot:\n%s' %(doctest._indent(want),
@@ -391,10 +573,12 @@ class XMLOutputChecker(doctest.OutputChecker):
                     error += "No known XML difference."
 
                 return error
+        # XXX - not tested
         return doctest.OutputChecker.output_difference(
             self, example, got, optionflags)
 
 xmlOutputChecker = XMLOutputChecker()
 
-__all__ = ("etreeSetup", "etreeTearDown", "assertXMLEqual",
-           "xmlOutputChecker", "XMLDATA")
+__all__ = ("etreeSetup", "etreeTearDown",
+           "xmlOutputChecker", "assertXMLEqual", "XMLDATA",
+           "assertXMLEqualIgnoreOrdering", "XMLDATA_IGNOREORDER")
