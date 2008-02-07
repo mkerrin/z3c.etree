@@ -133,15 +133,6 @@ class LXMLElementTreeTestCase(BaseEtreeTestCase):
     def test_xmltreebulider(self):
         self.assertRaises(NotImplementedError, self.etree.XMLTreeBuilder)
 
-    def test_mightbebroken_namespaces(self):
-        # When we have a element whoes namespace declaration is declared
-        # in a parent element lxml doesn't print out this namespace.
-        # This is a feature or bug of lxml but I don't think making work
-        # arounds is a good idea.
-        multinselemstr = """<D:prop xmlns:D="DAV:"><D:owner><H:href xmlns:H="examplens">http://example.org</H:href></D:owner></D:prop>"""
-        multinselem = self.etree.fromstring(multinselemstr)
-        self.assertEqual(self.etree.tostring(multinselem[0]),
-                         """<D:owner><H:href xmlns:H="examplens">http://example.org</H:href></D:owner>""")
 
 class Python25ElementTreeTestCase(BaseEtreeTestCase):
 

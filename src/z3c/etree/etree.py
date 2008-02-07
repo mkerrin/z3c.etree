@@ -34,7 +34,7 @@ class BaseEtree(object):
         return self.etree.Element(tag, attrib, **extra)
 
     def ElementTree(self, element = None, file = None):
-        return self.etree.ElementTree(element, file)
+        return self.etree.ElementTree(element, file = file)
 
     def XML(self, text):
         return self.etree.fromstring(text)
@@ -63,7 +63,7 @@ class BaseEtree(object):
         return self.etree.SubElement(parent, tag, attrib, **extra)
 
     def tostring(self, element, encoding = None):
-        return self.etree.tostring(element, encoding)
+        return self.etree.tostring(element, encoding = encoding)
 
     def TreeBuilder(self, element_factory = None):
         raise NotImplementedError, "lxml doesn't implement TreeBuilder"
