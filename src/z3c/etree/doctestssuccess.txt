@@ -30,3 +30,13 @@ Order doesn't matter with XMLDATA_IGNOREORDER
       </D:prop>
     </D:response>
   </D:multistatus>
+
+Ellipsis's
+----------
+
+We can use `...' which to test contents of an element.
+
+  >>> print '<test><a>Content 432432</a></test>' #doctest:+XMLDATA,+ELLIPSIS
+  <test>
+    <a>Content ...</a>
+  </test>

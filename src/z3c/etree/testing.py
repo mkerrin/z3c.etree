@@ -122,6 +122,12 @@ def _assertTextEqual(want, got, optionflags):
       ...                  XMLDATA|doctest.NORMALIZE_WHITESPACE)
       (True, None)
 
+    Ellipsis.
+
+      >>> _assertTextEqual("test ...", "test 324324", 
+      ...                  XMLDATA|doctest.ELLIPSIS)
+      (True, None)
+
     Unequal values.
 
       >>> _assertTextEqual("test", None, XMLDATA)
