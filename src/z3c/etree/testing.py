@@ -35,7 +35,7 @@ known_engines = {
     "cElementTree": "cElementTree",
     "elementtree": "elementtree.ElementTree",
     "lxml": "lxml.etree",
-    "py25": "xml.etree",
+    "py25": "xml.etree.ElementTree",
     }
 
 

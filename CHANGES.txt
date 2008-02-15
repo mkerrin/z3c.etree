@@ -5,6 +5,10 @@ Changes in z3c.etree
 0.9.2
 =====
 
+- Bug: Fix Python 2.5 support.
+
+- Bug: Declared z3c as a namespace.
+
 - Implemented a way of comparing two XML fragments while ignoring the
   ordering of elements at the same level.
 
