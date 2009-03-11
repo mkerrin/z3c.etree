@@ -21,7 +21,7 @@
 <!--
   <utility
      factory="cElementTree"
-     provided="z3c.etree.interfaces.IEtree"
+     provides="z3c.etree.interfaces.IEtree"
      />
 -->
 
@@ -30,8 +30,8 @@
     -->
 <!--
   <utility
-     factory="lxml.etree"
-     provided="z3c.etree.interfaces.IEtree"
+     component="lxml.etree"
+     provides="z3c.etree.interfaces.IEtree"
      />
 -->
 
