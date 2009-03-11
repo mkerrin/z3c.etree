@@ -13,8 +13,8 @@ Some simple basic tests.
 
   >>> sys.argv = 'test --tests-pattern ^doctests$ '.split()
   >>> testrunner.run(defaults)
-  ... # doctest: +NORMALIZE_WHITESPACE
-  Running unit tests:
+  ... # doctest: +NORMALIZE_WHITESPACE,+REPORT_NDIFF,+ELLIPSIS
+  Running...
   <BLANKLINE>
   <BLANKLINE>
   Failure doctests.txt
@@ -105,5 +105,5 @@ Some simple basic tests.
   XML differences:
      'test2' != 'test1' different tag name.
   <BLANKLINE>
-    Ran N tests with N failures and N errors in N.NNN seconds.
+    Ran N tests with N failures and N errors in N.NNN seconds...
   True

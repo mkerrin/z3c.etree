@@ -220,8 +220,11 @@ class doctestsSetup(object):
             )
         test.globs['this_directory'] = os.path.split(__file__)[0]
         test.globs['testrunner_script'] = __file__
-        test.globs['old_configure_logging'] = testrunner.configure_logging
-        testrunner.configure_logging = lambda : None
+        try:
+            test.globs['old_configure_logging'] = testrunner.configure_logging
+            testrunner.configure_logging = lambda : None
+        except AttributeError:
+            pass
         test.globs['old_engine'] = os.environ.get(
             z3c.etree.testing.engine_env_key)
         os.environ[z3c.etree.testing.engine_env_key] = self.engine_key
@@ -232,8 +235,11 @@ def doctestsTearDown(test):
     gc.set_threshold(*test.globs['saved-sys-info'][3])
     sys.modules.clear()
     sys.modules.update(test.globs['saved-sys-info'][2])
-    testrunner.configure_logging = test.globs['old_configure_logging']
-    del test.globs['old_configure_logging']
+    try:
+        testrunner.configure_logging = test.globs['old_configure_logging']
+        del test.globs['old_configure_logging']
+    except KeyError:
+        pass
     del os.environ[z3c.etree.testing.engine_env_key]
     del test.globs['old_engine']
 
