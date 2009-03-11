@@ -31,6 +31,24 @@ Order doesn't matter with XMLDATA_IGNOREORDER
     </D:response>
   </D:multistatus>
 
+Different attribute ordering
+----------------------------
+
+  >>> '<test><subtest a="b" c="d">XXX</subtest></test>' #doctest:+XMLDATA
+  '<test><subtest c="d" a="b">XXX</subtest></test>'
+
+Extra attributes doesn't matter with XMLDATA_IGNOREEXTRAATTRIBUTES
+------------------------------------------------------------------
+
+  >>> '<test><subtest a="b" c="d">XXX</subtest></test>' #doctest:+XMLDATA,+XMLDATA_IGNOREEXTRAATTRIBUTES
+  '<test><subtest c="d">XXX</subtest></test>'
+
+Missing attributes doesn't matter with XMLDATA_IGNOREMISSINGATTRIBUTES
+----------------------------------------------------------------------
+
+  >>> '<test><subtest c="d">XXX</subtest></test>' #doctest:+XMLDATA,+XMLDATA_IGNOREMISSINGATTRIBUTES
+  '<test><subtest c="d" a="b">XXX</subtest></test>'
+
 Ellipsis's
 ----------
 
@@ -40,3 +58,4 @@ We can use `...' which to test contents of an element.
   <test>
     <a>Content ...</a>
   </test>
+

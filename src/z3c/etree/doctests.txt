@@ -6,7 +6,7 @@ Test subelement with different name
 
 Test different number of elements on a sub element
 --------------------------------------------------
-  
+
   >>> '<test><subtest>Content</subtest></test>'
   '<test><subtest><subtest-2/></subtest></test>'
 

@@ -2,6 +2,12 @@
 Changes in z3c.etree
 ====================
 
+In the next release:
+
+- Implemented two new flags: XMLDATA_IGNOREMISSINGATTRIBUTES and
+  XMLDATA_IGNOREEXTRAATTRIBUTES, to allow specifying only the
+  attributes that matter.
+
 0.9.2
 =====
 

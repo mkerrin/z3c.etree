@@ -207,8 +207,9 @@ def _assertSubXMLElementsUnordered(want, got, optionflags):
 
 
 def _assertXMLElementEqual(want, got, optionflags):
-    # See assertXMLEqual for tests - it is easier to the tests with strings that
-    # get converted to element tree objects in assertXMLEqual.
+    # See assertXMLEqual for tests - it is easier to the tests with
+    # strings that get converted to element tree objects in
+    # assertXMLEqual.
     etree = z3c.etree.getEngine()
 
     if want.tag != got.tag:
@@ -222,17 +223,28 @@ def _assertXMLElementEqual(want, got, optionflags):
     if not result:
         return result, msg
 
-    if len(want.attrib) != len(got.attrib):
+    if (not (optionflags & XMLDATA_IGNOREMISSINGATTRIBUTES or
+            optionflags & XMLDATA_IGNOREEXTRAATTRIBUTES)
+        and len(want.attrib) != len(got.attrib)):
         return False, "%d != %d different number of attributes on %r." %(
             len(want.attrib), len(got.attrib), want.tag)
+
     for attrib, attrib_value in want.attrib.items():
         if attrib not in got.attrib:
-            return False, "%r expected to find the %r attribute." %(
-                want.tag, attrib)
-        if got.attrib[attrib] != attrib_value:
-            return \
-               False, "%r attribute has different value for the %r tag." %(
-                   attrib, want.tag)
+            if not optionflags & XMLDATA_IGNOREMISSINGATTRIBUTES:
+                return False, "%r expected to find the %r attribute." %(
+                    want.tag, attrib)
+        else:
+            if got.attrib[attrib] != attrib_value:
+                return False, (
+                    "%r attribute has different value for the %r tag." % (
+                        attrib, want.tag))
+
+    for attrib, attrib_value in got.attrib.items():
+        if attrib not in want.attrib:
+            if not optionflags & XMLDATA_IGNOREEXTRAATTRIBUTES:
+                return False, "%r found the unexpected %r attribute." %(
+                    got.tag, attrib)
 
     if optionflags & XMLDATA_IGNOREORDER:
         return _assertSubXMLElementsUnordered(want, got, optionflags)
@@ -552,6 +564,11 @@ XMLDATA = doctest.register_optionflag("XMLDATA")
 
 XMLDATA_IGNOREORDER = doctest.register_optionflag("XMLDATA_IGNOREORDER")
 
+XMLDATA_IGNOREMISSINGATTRIBUTES = doctest.register_optionflag(
+    "XMLDATA_IGNOREMISSINGATTRIBUTES")
+
+XMLDATA_IGNOREEXTRAATTRIBUTES = doctest.register_optionflag(
+    "XMLDATA_IGNOREEXTRAATTRIBUTES")
 
 class XMLOutputChecker(doctest.OutputChecker):
 
