@@ -550,12 +550,16 @@ def _assertXMLElement(want, got, optionflags):
         if not isinstance(s, (str, unicode)):
             return s # not tested
         s = s.strip()
-        if s[0] in ("'", '"') and s[-1] in ("'", '"'):
+        if s and s[0] in ("'", '"') and s[-1] in ("'", '"'):
             s = s[1:-1]
         return s
 
-    want = etree.fromstring(clean_string(want))
-    got = etree.fromstring(clean_string(got))
+    want = clean_string(want)
+    got = clean_string(got)
+    if not want or not got:
+        return False, "something is missing"
+    want = etree.fromstring(want)
+    got = etree.fromstring(got)
 
     return _assertXMLElementEqual(want, got, optionflags)
 
