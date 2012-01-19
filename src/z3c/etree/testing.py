@@ -30,12 +30,13 @@ import z3c.etree.etree
 
 engine_env_key = "ELEMENTTREE_ENGINE"
 
-known_engines = {
-    "cElementTree": "cElementTree",
-    "elementtree": "elementtree.ElementTree",
-    "lxml": "lxml.etree",
-    "py25": "xml.etree.ElementTree",
-    }
+known_engines = (
+    ("py25", "xml.etree.ElementTree"),
+    ("xml.etree", "xml.etree.ElementTree"),
+    ("cElementTree", "cElementTree"),
+    ("elementtree", "elementtree.ElementTree"),
+    ("lxml", "lxml.etree"),
+    )
 
 
 def importEngine(modname):
@@ -46,13 +47,15 @@ def importEngine(modname):
     return engine
 
 
-def etreeSetup(test = None):
+def etreeSetup(test = None, key = None):
     engine = None
 
-    if engine_env_key in os.environ:
-        engine = importEngine(known_engines[os.environ[engine_env_key]])
+    if key is not None or engine_env_key in os.environ:
+        engine = importEngine(
+            dict(known_engines)[key or os.environ[engine_env_key]]
+            )
     else:
-        for key, modname in known_engines.items():
+        for key, modname in known_engines:
             try:
                 engine = importEngine(modname)
                 break
