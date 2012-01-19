@@ -1,5 +1,5 @@
 import unittest
-from zope.testing import doctest
+import doctest
 import z3c.etree.testing
 
 

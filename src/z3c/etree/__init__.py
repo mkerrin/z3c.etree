@@ -20,9 +20,7 @@ $Id$
 import zope.component
 from interfaces import IEtree
 
-_utility = None
+import xml.etree
+
 def getEngine():
-    global _utility
-    if _utility is None:
-        _utility = zope.component.getUtility(IEtree)
-    return _utility
+    return xml.etree.ElementTree

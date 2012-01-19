@@ -13,10 +13,7 @@
 ##############################################################################
 """
 Zope Element Tree Support
-
-$Id$
 """
-__docformat__ = 'restructuredtext'
 
 from zope import interface
 

@@ -3,7 +3,7 @@ XML doctest support
 ===================
 
   >>> import sys
-  >>> from zope.testing import testrunner
+  >>> import zope.testrunner
   >>> defaults = [
   ...    '--path', this_directory,
   ...    '--tests-pattern', '^doctests$',
@@ -12,7 +12,7 @@ XML doctest support
 Some simple basic tests.
 
   >>> sys.argv = 'test --tests-pattern ^doctests$ '.split()
-  >>> testrunner.run(defaults)
+  >>> zope.testrunner.run_internal(defaults)
   ... # doctest: +NORMALIZE_WHITESPACE,+REPORT_NDIFF,+ELLIPSIS
   Running...
   <BLANKLINE>

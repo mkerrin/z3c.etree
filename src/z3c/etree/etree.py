@@ -12,11 +12,7 @@
 #
 ##############################################################################
 """Zope Element Tree Support
-
-$Id$
 """
-__docformat__ = 'restructuredtext'
-
 import copy
 from zope.interface import implements
 

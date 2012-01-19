@@ -12,14 +12,13 @@
 #
 ##############################################################################
 """Zope Element Tree Support
-
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 import os
+import doctest
+
 import zope.component
-from zope.testing import doctest
 
 import z3c.etree
 import z3c.etree.interfaces

@@ -17,8 +17,6 @@ more of an assertion that I spelt things, like variable names correctly. By
 just calling the methods here I have managed to find a bunch of bugs. :-)
 
 Otherwise I just assume that underlying engine does its job correctly.
-
-$Id$
 """
 
 import os
@@ -27,10 +25,10 @@ import sys
 import gc
 import re
 import unittest
+import doctest
 from cStringIO import StringIO
 
 from zope import component
-from zope.testing import doctest
 from zope.testing import renormalizing
 from zope.testing import testrunner
 from zope.interface.verify import verifyObject
